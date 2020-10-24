@@ -140,7 +140,6 @@ for key in helper_dict.keys():
  
 absa=pd.concat(bank_year_and_month) 
 
-
 # we only need one entry per month - so select column code 7 and itemnumber 2 for example 
 absa_weights=absa[(absa['ColumnCode']=='7')&(absa['ItemNumber']=='2')]
 absa_weights.index=absa_weights.time
@@ -156,7 +155,9 @@ plt.show()
 ```
 ![absa portfolio weights](https://github.com/t1nak/ba900/blob/main/data/absa_weights.png?raw=true)
 
-So you can see the gradual decline in household mortgage credit in ABSA's balance sheet as a share of total balance sheet size. 
+So you can see the gradual decline in household mortgage credit in ABSA's balance sheet as a share of its total balance sheet size. 
+
+You can check some examples in the ``exame_analyse.ipynb`` notebook. 
 
 Write me if you have questions. There is a lot of 
 scope to make this more user-friendly and if I get more feedback I will gladly do so. However, for my own purposes it has been sufficient like it is. 
