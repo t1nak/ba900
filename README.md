@@ -154,7 +154,7 @@ plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
 plt.show()
 
 ```
-![absa portfolio weights]()
+![absa portfolio weights](https://github.com/t1nak/ba900/blob/main/data/absa_weights.png?raw=true)
 
 So you can see the gradual decline in household mortgage credit in ABSA's balance sheet as a share of total balance sheet size. 
 
