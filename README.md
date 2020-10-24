@@ -69,8 +69,8 @@ print('All done. Have fun analysing.')nt('All done. Have fun analysing.')
 
 ```
 After calling ba900.py you should see something like this:
-[!image](https://github.com/t1nak/ba900/blob/main/data/success_screenshot.png?raw=true)
-So the banks and their respective montlhy data is being processed.
+![image](https://github.com/t1nak/ba900/blob/main/data/success_screenshot.png?raw=true)
+So the banks and their respective monthly data are being processed.
 It takes about 30 to 40 min to run all the bank and years (2008 to 2020).
 
 ## Step 4
