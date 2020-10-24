@@ -1,14 +1,13 @@
 # ba900
 
-Attention: requires **python 2.7!** Yes, the old one, I coded this up a long time ago.
-I will probably transcribe it to python 3 at some point. So long, you must create a python environment with python=2.7.; because ``basestring`` is missing in python 3. 
+Attention: requires **python 2.7!** Yes, the old one. I coded this up a long time ago.
+I will probably transcribe it to python 3 at some point. So long, you must create a python environment with python=2.7. because ``basestring`` is missing in python 3. 
 
-# Get the South African Reserve Bank BA 900 forms:
-Time series of SA banks' balance sheets items 
+# Get the South African Reserve Bank BA 900 forms - Time series of SA banks' balance sheets items 
 
 ## Step 1
 
-Run this snippet to create a folder ``data`` in your project directory and one for each year available on the website:
+Run this snippet to create the folder ``data`` in your project directory and one for each year available on the website:
 
 ```
 import os
@@ -27,9 +26,8 @@ Download all the xml files from the SARB's [homepage](https://www.resbank.co.za/
 
 ## Step 3
 
-Extract the data from the xml.
-Run ```ba900.py``` or the following snipped with the folder name you just created. It will extract all data from the xml files and save as ```year.pkl```. 
-
+To convert the data from xml to dataframe
+run ```ba900.py``` or the following snipped with the folder name you just created. The script will extract all data from the xml files and save as ```year.pkl```. 
 
 
 ```
@@ -52,7 +50,7 @@ years = [ 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019
 
 data = save_yearly_data(years, folder)
 
-filename =  os.path.join(folder, 'latest_data.pickle')
+filename =  os.path.join(folder, 'data.pickle')
 
 with open(filename, 'wb') as f:
     pickle.dump(data, f)
@@ -60,3 +58,7 @@ with open(filename, 'wb') as f:
 print('All done. Have fun analysing.')
 
 ```
+## Step 4
+
+Now you have the data - great. However, analysis of the data requires good understanding of the ba900 forms. Here is a csv for ABSA, December 2008. 
+There are ``18 tables`` and ``383 unique Item numbers``. For example, asset positions are items ``103`` to ``277``.
