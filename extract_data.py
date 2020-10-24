@@ -6,12 +6,12 @@ import numpy as np
 from iteration import *
 import os
 
-def save_yearly_data(years, dir):
+def save_yearly_data(years, dirin, dirout):
 
 	all_data = []
 	for y in years:
 		paths = []
-		rootdir = dir+str(y)+'/'
+		rootdir = dirin+str(y)+'/'
 		print(rootdir)
 		for subdir_month, dirs, files in os.walk(rootdir):
 			paths.append(subdir_month)
@@ -31,11 +31,9 @@ def save_yearly_data(years, dir):
 		# df_Master = pd.concat(monthly_data, keys=list_keys)
 
 		df_Master = pd.concat(monthly_data)
-		df_Master.to_pickle(dir+"/df"+str(y)+".pkl")
-		print("Yearly data was written in" ,dir,"df",str(y),".pkl")
+		df_Master.to_pickle(dirout+"/df"+str(y)+".pkl")
+		print("Yearly data was written in" ,dirout,"df",str(y),".pkl")
 		all_data.append(df_Master)
-
-	# monthly.to_csv('/Users/Tina/Dropbox/phd/projects/ba900/test.csv') 
 	return all_data
 
 
