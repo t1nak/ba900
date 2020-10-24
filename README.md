@@ -76,8 +76,8 @@ All the years (2008 to 2020) take about 30-40min to run and process.
 ## Step 4
 
 Now you have the data - great. However, analysis of the data requires good understanding of the ba900 forms. 
-(Here)[https://github.com/t1nak/ba900/blob/main/BA900-2008-12-31.csv] is a csv for ABSA, December 2008.
-- (download link)[https://raw.githubusercontent.com/t1nak/ba900/main/BA900-2008-12-31.csv]  
+[Here](https://github.com/t1nak/ba900/blob/main/BA900-2008-12-31.csv) is a csv for ABSA, December 2008.
+- [download link](https://raw.githubusercontent.com/t1nak/ba900/main/BA900-2008-12-31.csv) 
 
 There are ``18 tables`` and ``383 unique Item numbers``. For example asset side positions are item numbers ``103`` to ``277``.
 
