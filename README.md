@@ -3,6 +3,8 @@
 Attention: requires **python 2.7!** Yes, the old one. I coded this up a long time ago.
 I will probably transcribe it to python 3 at some point. So long, you must create a python environment with python=2.7 because ``basestring`` is missing in python 3. 
 
+Other dependencies: ```lxml``` and ```more_itertools``` ([pypi](https://pypi.org/project/more-itertools/))
+
 # Get the South African Reserve Bank BA 900 forms -
 ## Time series of SA banks' balance sheets items 
 
@@ -16,7 +18,7 @@ Run this snippet to create the folder ``data/downloaded`` in your project direct
 
 ```
 import os
-folder='data/'
+folder='data/downloaded'
 path = os.path.join(os.getcwd(),folder)
 years = [i for i in range(2008, 2021, 1)]
 
@@ -77,18 +79,84 @@ It takes about 30 to 40 min to run all the bank and years (2008 to 2020).
 ## Step 4
 
 Now you have the data - great. However, analysis of the data requires good understanding of the ba900 forms. 
-[Here](https://github.com/t1nak/ba900/blob/main/BA900-2008-12-31.csv) is a csv for ABSA, December 2008.
-- [download link](https://raw.githubusercontent.com/t1nak/ba900/main/BA900-2008-12-31.csv) 
+[Here](https://github.com/t1nak/ba900/blob/main/data/BA900-2008-12-31.csv) is a csv for ABSA, December 2008.
+- [download link](https://raw.githubusercontent.com/t1nak/ba900/main/data/BA900-2008-12-31.csv) 
 
 There are ``18 tables`` and ``383 unique Item numbers``. For example asset side positions are item numbers ``103`` to ``277``.
 
 
-After familiarising with the structure, you can load the pickled data and look at the time series with something like this
-
-
-```
+After familiarising yourself with the structure, you can load the pickled data and look at the time series with something like this
 
 ```
+#load data
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+import datetime
+file_list=[]
+for filename in os.listdir('./data/output/'):
+    if filename.endswith(".pkl"):
+        unpickle = './data/output/'+str(filename)
+        print(unpickle)
+        file_list.append(pd.read_pickle(unpickle))
+ 
+ 
+MASTER = pd.concat(file_list)
+MASTER['time'] = pd.to_datetime(MASTER['time'])
+
+#print all column names
+print(MASTER.columns)
+```
+Print all banks in the data set with ``print(MASTER['InstitutionDescription'].unique())``
+
+Look at ABSA bank asset portfolio weights:
+```
+#need assets_to_weights.py 
+from assets_to_weights import *
+
+  
+years=[str(i) for i in range(2008,2020, 1)]
+months=["{:02d}".format(i) for i in range(1,13)]
+
+helper_dict={}
+
+for y in years:
+    helper_dict[y]=months
+    
+BANK = MASTER[MASTER['InstitutionDescription']=='ABSA BANK LTD ']
+BANK['Value'] = pd.to_numeric(BANK['Value'])
+
+bank_year_and_month = []
+for key in helper_dict.keys():
+    for month in helper_dict[key]:
+        
+        df_bank_key_month =  BANK[(BANK['TheYear']==key)&(BANK['TheMonth']==month)]
+#         print((month),(key),df_bank_key_month )
+        try:
+            bank_year_and_month.append(get_pf_weights_by_bank_29(df_bank_key_month))
+        except:
+            pass
+ 
+absa=pd.concat(bank_year_and_month) 
+
+
+# we only need one entry per month - so select column code 7 and itemnumber 2 for example 
+absa_weights=absa[(absa['ColumnCode']=='7')&(absa['ItemNumber']=='2')]
+absa_weights.index=absa_weights.time
+
+f = plt.figure()
+plt.title('ABSA portfolio weights', color='black')
+ 
+for column in absa_weights[absa.columns[-19:-10]]:
+    absa_weights[column].plot(legend=column, ax=f.gca())
+plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+plt.show()
+
+```
+![absa portfolio weights]()
+
+So you can see the gradual decline in household mortgage credit in ABSA's balance sheet as a share of total balance sheet size. 
 
 Write me if you have questions. There is a lot of 
 scope to make this more user-friendly and if I get more feedback I will gladly do so. However, for my own purposes it has been sufficient like it is. 
