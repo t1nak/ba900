@@ -1,8 +1,10 @@
 # ba900
 
-Attention: requires python 2.7! (Yes, the old one, I coded this up a long time ago. So you must create a python environment with python=2.7.; because ``basestring`` is missing in python 3)
+Attention: requires **python 2.7!** Yes, the old one, I coded this up a long time ago.
+I will probably transcribe it to python 3 at some point. So long, you must create a python environment with python=2.7.; because ``basestring`` is missing in python 3. 
 
-# Get the South African Reserve Bank BA 900 forms (time series) 
+# Get the South African Reserve Bank BA 900 forms:
+Time series of SA banks' balance sheets items 
 
 ## Step 1
 
@@ -23,7 +25,7 @@ for y in years:
 
 Download all the xml files from the SARB's [homepage](https://www.resbank.co.za/Research/Statistics/Pages/Banks-BA900-Economic-Returns.aspx) and unzip into the corresponding folder. If I find time I will add a little selenium function to do this automatically, but it's very simple as it is :)
 
-## Step 2
+## Step 3
 
 Extract the data from the xml.
 Run ```ba900.py``` or the following snipped with the folder name you just created. It will extract all data from the xml files and save as ```year.pkl```. 
