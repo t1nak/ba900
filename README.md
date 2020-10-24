@@ -71,7 +71,7 @@ print('All done. Have fun analysing.')nt('All done. Have fun analysing.')
 
 This will be printed to screen after calling ba900.py:
 [!image]()
-All the years (2008 to 2020) take about 20min to process.
+All the years (2008 to 2020) take about 30-40min to run and process.
 
 ## Step 4
 
