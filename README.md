@@ -114,7 +114,7 @@ Look at ABSA bank asset portfolio weights:
 ```
 #need assets_to_weights.py 
 from assets_to_weights import *
-
+transform=tranformer()
   
 years=[str(i) for i in range(2008,2020, 1)]
 months=["{:02d}".format(i) for i in range(1,13)]
@@ -134,7 +134,7 @@ for key in helper_dict.keys():
         df_bank_key_month =  BANK[(BANK['TheYear']==key)&(BANK['TheMonth']==month)]
 #         print((month),(key),df_bank_key_month )
         try:
-            bank_year_and_month.append(get_pf_weights_by_bank_29(df_bank_key_month))
+            bank_year_and_month.append(transform.get_pf_weights_by_bank_29(df_bank_key_month))
         except:
             pass
  
@@ -157,7 +157,70 @@ plt.show()
 
 So you can see the gradual decline in household mortgage credit in ABSA's balance sheet as a share of its total balance sheet size. 
 
+For the top 4 banks:
+
+```
+# show portfolio weights for absa's credit book
+from assets_to_weights import *
+
+transform=tranformer()
+
+years=[str(i) for i in range(2008,2021, 1)]
+months=["{:02d}".format(i) for i in range(1,13)]
+
+
+top5=[ 'ABSA BANK LTD ',\
+        'THE STANDARD BANK OF S A LTD ',\
+        MASTER[MASTER['InstitutionDescription'].str.contains('NEDBANK')]['InstitutionDescription'].values[0],\
+        MASTER[MASTER['InstitutionDescription'].str.contains('FIRSTRAND')]['InstitutionDescription'].values[0],\
+        MASTER[MASTER['InstitutionDescription'].str.contains('CAPITEC BANK')]['InstitutionDescription'].values[0]
+      ]
+
+df=MASTER[MASTER.InstitutionDescription.isin(top5)]
+arr = np.empty((0,len(df[df['InstitutionDescription'].str.contains('ABSA BANK LTD ')].time.unique()))) 
+ 
+for b in top5:
+    test=transform.get_bankdata(years,months,df, b)
+
+    # # we only need one entry per month - so select column code 7 and itemnumber 2 for example 
+    test_weights=test[(test['ColumnCode']=='7')&(test['ItemNumber']=='2')]
+    test_weights.index=test_weights.time
+    # f = plt.figure()
+    # plt.title('ABSA portfolio weights', color='black') 
+    # for column in test_weights[test.columns[-19:-10]]:
+    #     test_weights[column].plot(legend=column, ax=f.gca())
+    # plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+    # plt.show()
+    weights_only=test_weights[test_weights.columns[-29:]] 
+    d=weights_only.filter(like='Household_mortgages').squeeze().values 
+    arr=np.vstack((arr,d))
+    
+import matplotlib.pyplot as plt
+
+top5=[ 'ABSA BANK LTD ',\
+        'THE STANDARD BANK OF S A LTD ',\
+        MASTER[MASTER['InstitutionDescription'].str.contains('NEDBANK')]['InstitutionDescription'].values[0],\
+        MASTER[MASTER['InstitutionDescription'].str.contains('FIRSTRAND')]['InstitutionDescription'].values[0],\
+        MASTER[MASTER['InstitutionDescription'].str.contains('CAPITEC BANK')]['InstitutionDescription'].values[0]
+      ]
+
+f = plt.figure()
+plt.title('Household mortgage portfolio weights', color='black')
+ 
+for i,name in zip(arr[:-1],top5[:-1]):
+    plt.plot(test_weights.time,i , label=name)
+
+plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+plt.show()
+```
+
+![top4 portfolio weights](https://github.com/t1nak/ba900/blob/main/data/top4_mortgage_weights.png?raw=true)
+
+
 You can check some examples in the ``exame_analyse.ipynb`` notebook. 
 
 Write me if you have questions. There is a lot of 
 scope to make this more user-friendly and if I get more feedback I will gladly do so. However, for my own purposes it has been sufficient like it is. 
+
+
+
