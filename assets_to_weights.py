@@ -1,10 +1,33 @@
 #function to convert assets to portfolio weights
 import pandas as pd
+import numpy as np
 
 class tranformer():
 
 	def __init__(self):
 		pass
+
+	def get_weights_banks_timeseries_29assets(self, years, months, alldata, banklist):
+		dicp={}
+		for jahr in years:
+
+			for month in months:
+				df2=pd.DataFrame()
+				for b in banklist:
+					try:
+						test=self.get_bankdata_29assets([jahr],[month],alldata, b)
+						test_weights=test[(test['ColumnCode']=='7')&(test['ItemNumber']=='2')]
+						test_weights.index=test_weights.time
+						weights_only=test_weights[test_weights.columns[-29:]] 
+						#build for all banks, but one time
+						df2[b] = weights_only.T[weights_only.T.columns[0]]
+						k=weights_only.T.columns[0]
+					except:
+						print(b,'did not work')
+
+				dicp[k]=df2
+			print(jahr, ' processed')
+		return dicp 
 
 	def get_pf_weights_by_bank_29(self,df2):  
 	    names_group1=['South_African_bank_notes_and_subsidiary_coin',
@@ -113,7 +136,7 @@ class tranformer():
 	    # print(df2['InstitutionDescription'].unique()," processed and returned weights")
 	    return df2
 
-	def get_bankdata(self, years,months,df, bank_string):
+	def get_bankdata_29assets(self, years,months,df, bank_string):
 	    helper_dict={}
 	    for y in years:
 	        helper_dict[y]=months
@@ -131,5 +154,22 @@ class tranformer():
 	                pass
 
 	    bank=pd.concat(bank_year_and_month)
-	    print('all data returned for ',bank_string)
+	    # print('all data returned for ',bank_string)
 	    return bank
+
+
+
+	def create_similarity_matrix(self, banklist, dictionary, dictkey):
+		#Make filler matrix
+		import numpy as np
+		filler=pd.DataFrame( columns=banklist, index=banklist)
+		t4=filler
+		w=dictionary[dictkey]
+
+		for bank1 in banklist:    
+			for bank2 in banklist:
+				t4.at[bank2, bank1] =np.linalg.norm(w[bank1]-w[bank2])
+		return t4
+		
+
+
