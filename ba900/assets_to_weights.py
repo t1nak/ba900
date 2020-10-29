@@ -7,6 +7,65 @@ class tranformer():
 	def __init__(self):
 		pass
 
+
+
+	def get_bank_totals(self, id, bankstring,jahr, monat, dfrenamed):
+	    helper={}
+
+	    month=monat
+	    year=jahr
+
+
+	    b=bankstring
+
+	    helper['id']=id
+	    helper['name']=b
+	    helper['equity']=self.get_equity_single_value(b, month,year,  dfrenamed )*1000
+	    helper['year']=year
+	    helper['month'] = month
+	    helper['debt']=self.get_debt_single_value(b, month,year, dfrenamed )*1000
+	    helper['leverage']=self.get_debt_single_value(b, month,year, dfrenamed )/self.get_equity_single_value(b, month,year,  dfrenamed )
+	    helper['total_assets']=self.get_total_assets_single_value(b, month,year, dfrenamed )*1000
+
+	    #get the weights - call function and select single value and last 29 columns to get only the weights
+	    test=self.get_bankdata_29assets([year],[month],dfrenamed, b)
+	    # # we only need one entry per month - so select column code 7 and itemnumber 2 for example 
+	    test_weights=test[(test['ColumnCode']=='7')&(test['ItemNumber']=='2')]
+	    test_weights.index=test_weights.time
+	    weights_only=test_weights[test_weights.columns[-29:]] 
+
+	    helper['time']=test_weights.time
+	    for column in weights_only:
+	        helper[column]=weights_only[column][-1]
+
+	    if helper['total_assets']==(helper['equity']+ helper['debt']):
+	        df4=pd.DataFrame(helper)
+
+	        # Check constitency ==1?
+	        if round(df4.iloc[0:1,-29:].sum(axis=1).values[0])==1:
+	            # print(b,'returned')
+	            return df4
+		            
+	def get_overview_timeseries(self,banklist, months,years,dfrenamed):
+	    import string
+	    letters = list(string.ascii_uppercase)[:26]
+
+	    temp1=[]
+	    temp2=[]
+	    temp3=[]
+	    for y in years:
+	        for m in months:
+	            # Get bank totals for each of those strings 
+	            for name,l in zip(banklist,letters):
+	                temp1.append(self.get_bank_totals(l,name,y, m, dfrenamed))
+
+	            temp2.append(pd.concat(temp1))
+	        temp3.append(pd.concat(temp2))
+	    df=pd.concat(temp3)
+	    df=df.drop_duplicates()
+	    return df
+
+
 	def get_weights_banks_timeseries_29assets(self, years, months, alldata, banklist):
 		dicp={}
 		for jahr in years:
@@ -157,7 +216,48 @@ class tranformer():
 	    # print('all data returned for ',bank_string)
 	    return bank
 
+	def relabel_banknames(self, banklistfrom, banklisto,bigdata):
+	    
+	    for old, new in zip(banklistfrom,banklisto):
+	        
+	        try:
+	            bigdata['InstitutionDescription'] = bigdata['InstitutionDescription'].apply(lambda x: x.replace(old, new))
+	            print('changed {} to: {}'.format(old, new))
+	        except:
+	            print(old,'was not found')
+	    return bigdata
+	        
 
+	def get_equity_single_value(self, bankstring, monthstring, yearstring , MASTER):
+	    
+	    try:
+	        equity=MASTER[(MASTER['TheYear']==yearstring)&(MASTER['TheMonth']==monthstring)&
+	                  (MASTER['InstitutionDescription']==bankstring)&(MASTER['ItemNumber']=='96')&(MASTER['ColumnCode']=='1')]
+	        return float(equity.Value.values[0])
+	    
+	    except:
+	        print("did not work - perhaps bank string {} was incorrect?".format(bankstring))
+	
+
+	def get_debt_single_value(self, bankstring, monthstring, yearstring , MASTER):
+	    
+	    try:
+	        debt=MASTER[(MASTER['TheYear']==yearstring)&(MASTER['TheMonth']==monthstring)&
+	                  (MASTER['InstitutionDescription']==bankstring)&(MASTER['ItemNumber']=='95')&(MASTER['ColumnCode']=='4')]
+	        return float(debt.Value.values[0])
+	    
+	    except:
+	        print("did not work - perhaps bank {} string was incorrect?".format(bankstring))
+
+	def get_total_assets_single_value(self, bankstring, monthstring, yearstring , MASTER):
+	    
+	    try:
+	        debt=MASTER[(MASTER['TheYear']==yearstring)&(MASTER['TheMonth']==monthstring)&
+	                  (MASTER['InstitutionDescription']==bankstring)&(MASTER['ItemNumber']=='102')&(MASTER['ColumnCode']=='1')]
+	        return (debt.Value.values[0])
+	    except:
+	        print("did not work - perhaps bank {} string was incorrect?".format(bankstring))
+	        
 
 	def create_similarity_matrix(self, banklist, dictionary, dictkey):
 		#Make filler matrix
@@ -170,6 +270,17 @@ class tranformer():
 			for bank2 in banklist:
 				t4.at[bank2, bank1] =np.linalg.norm(w[bank1]-w[bank2])
 		return t4
-		
+
+	def get_biggest_banks(self, yearstring, monthstring, bigdata, topnumber):
+	    year = yearstring
+	    month= monthstring
+	    a=bigdata[(bigdata['ColumnCode']=='7')&(bigdata['ItemNumber']=='2')\
+	          &(bigdata['TheYear']==yearstring)&(bigdata['TheMonth']==monthstring)
+	          ]
+	    a['Value'] = pd.to_numeric(a['Value'])
+	    sorted=a.sort_values(by='Value', ascending=False)
+	    selected=sorted[sorted.InstitutionCode!='TOTAL'].InstitutionDescription.head(topnumber)
+	    return selected 
+			
 
 
