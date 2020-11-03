@@ -216,6 +216,10 @@ plt.show()
 
 ![top4 portfolio weights](https://github.com/t1nak/ba900/blob/main/data/top4_mortgage_weights.png?raw=true)
 
+![top10 similarity full](https://github.com/t1nak/ba900/blob/main/data/similarity_2018_full.png?raw=true)
+
+![top10 similarity half](https://github.com/t1nak/ba900/blob/main/data/similarity_2018_fhalf.png?raw=true)
+
 
 You can check some examples in the ``exame_analyse.ipynb`` notebook. 
 

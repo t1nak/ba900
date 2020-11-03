@@ -7,7 +7,75 @@ class tranformer():
 	def __init__(self):
 		pass
 
+	def make_bank_config_27_assets(self,t):
+	    megastring="""
+	    <agent identifier="{}">
+	    <parameter type="state_variables" name="equity" value="{}"></parameter>
+	     <parameter type="parameters" name="leverage" value="{}"></parameter>
+	     <parameter type="state_variables" name="debt" value="{}"></parameter>
+	     <parameter type="parameters" name="m_1" value="{}" label="Cash and gold reserves "></parameter>
+	     <parameter type="parameters" name="m_2" value="{}" label="SA Interbank deposits, loans and advances"></parameter>
+	     <parameter type="parameters" name="m_3" value="{}" label="Rand Deposits with and loans to foreign banks"></parameter>
+	     <parameter type="parameters" name="m_4" value="{}" label="Loans granted under repo agreement"></parameter>
+	     <parameter type="parameters" name="m_5" value="{}" label="Foreign currency loans and advances"></parameter>
+	     <parameter type="parameters" name="m_6" value="{}" label="Redeemable preference shares"></parameter>
+	     <parameter type="parameters" name="m_7" value="{}" label="corporate instalment credit "></parameter>
+	     <parameter type="parameters" name="m_8" value="{}" label="household instalment credit "></parameter>
+	     <parameter type="parameters" name="m_9" value="{}" label="corporate mortgage"></parameter>
+	     <parameter type="parameters" name="m_10" value="{}" label="household mortgage"></parameter>
+	     <parameter type="parameters" name="m_11" value="{}" label="Unsecured lending corporate"></parameter>
+	     <parameter type="parameters" name="m_12" value="{}" label="Unsecured lending households"></parameter>
+	     <parameter type="parameters" name="m_13" value="{}" label="Other credit (credit card + leasing + Overdarft + factoring debt)"></parameter>
+	     <parameter type="parameters" name="m_14" value="{}" label="Central and provincial government bonds"></parameter>
+	     <parameter type="parameters" name="m_15" value="{}" label="Other public-sector bonds"></parameter>
+	     <parameter type="parameters" name="m_16" value="{}" label="Private sector bonds"></parameter>
+	     <parameter type="parameters" name="m_17" value="{}" label="Equity holdings in subsidiaries and joint ventures"></parameter>
+	     <parameter type="parameters" name="m_18" value="{}" label="Listed and unlisted equities"></parameter>
+	     <parameter type="parameters" name="m_19" value="{}" label="Securitisation/ asset-backed securities"></parameter>
+	     <parameter type="parameters" name="m_20" value="{}" label="Derivative instruments"></parameter>
+	     <parameter type="parameters" name="m_21" value="{}" label="Treasury bills, SA Reserve Bank bills,  Land Bank bills "></parameter>
+	     <parameter type="parameters" name="m_22" value="{}" label="Other investments"></parameter>
+	     <parameter type="parameters" name="m_23" value="{}" label="Non financial assets"></parameter>
+	      <parameter type="parameters" name="m_24" value="{}" label="Derivative instruments"></parameter>
+	     <parameter type="parameters" name="m_25" value="{}" label="Treasury bills, SA Reserve Bank bills,  Land Bank bills "></parameter>
+	     <parameter type="parameters" name="m_26" value="{}" label="Other investments"></parameter>
+	     <parameter type="parameters" name="m_27" value="{}" label="Non financial assets"></parameter>
+	    </agent>""".format( t['name'].values[0],t['equity'].values[0], 
+	                       t['leverage'].values[0],
+	                       t['debt'].values[0],
+	                       t['m1_Cash_and_gold_reserves'].values[0],
+	                       t['m2_SA_Interbank_deposits'].values[0],
+	                       t['m3_Rand_Deposits_to_and_loans_to_foreign_banks'].values[0],
+	                       t['m4_Loans_granted_under_repo_agreement'].values[0],
+	                       t['m5_Foreign_currency_loans_and_advances'].values[0], 
+	                       t['m6_Redeemable_preference_shares'].values[0],
+	                       t['m7_Corporate_installments'].values[0],      
+	                       t['m8_Household_installments'].values[0],
+	                       t['m9_Corporate_mortgages'].values[0],
+	                       t['m10_Household_mortgages'].values[0],
+	                       t['m11_Corporate_credit_card'].values[0],     
+	                       t['m12_Household_credit_card'].values[0],
+	                       t['m13_Corporate_leasing'].values[0],
+	                       t['m14_Household_leasing'].values[0],
+	                       t['m15_Corporate_unsecured_lending'].values[0],
+	                       t['m16_Household_unsecured_lending'].values[0],
+	                       t['m17_Other_credit'].values[0],
+	                       t['m18_Central_and_provincial_government_bonds'].values[0],
+	                       t['m19_Other_public_sector_bonds'].values[0],
+	                       t['m20_Private_sector_bonds'].values[0],
+	                       t['m21_Equity_holdings_in_subsidiaries_and_joint_ventures'].values[0],
+	                       t[ 'm22_Listed_and_unlisted_equities'].values[0], 
+	                       t['m23_Securitisation/ asset-backed_securities'].values[0],   
+	                       t['m24_Derivative_instruments'].values[0],
+	                       t['m25_Treasury_bills_SA_Reserve_Bank_bills_Land_Bank_bills'].values[0],     
+	                       t['m26_Other_investments_less_impairments'].values[0], 
+	                       t['m27_Non_financial_assets'].values[0])
+	    
+	    return megastring
 
+	def write_to_file(self, megastring, name):
+	    with open(name, 'w') as file:
+	        file.write(megastring)
 
 	def get_bank_totals(self, id, bankstring,jahr, monat, dfrenamed):
 	    helper={}
@@ -68,21 +136,29 @@ class tranformer():
 
 	def get_weights_banks_timeseries_29assets(self, years, months, alldata, banklist):
 		dicp={}
+		import sys
 		for jahr in years:
 
 			for month in months:
 				df2=pd.DataFrame()
 				for b in banklist:
-					try:
-						test=self.get_bankdata_29assets([jahr],[month],alldata, b)
-						test_weights=test[(test['ColumnCode']=='7')&(test['ItemNumber']=='2')]
-						test_weights.index=test_weights.time
-						weights_only=test_weights[test_weights.columns[-29:]] 
-						#build for all banks, but one time
-						df2[b] = weights_only.T[weights_only.T.columns[0]]
-						k=weights_only.T.columns[0]
-					except:
-						print(b,'did not work')
+				    if b not in alldata['InstitutionDescription'].unique():
+				        print(b,'not in the dataset - try again!')
+				        sys.exit()
+
+				    else:
+
+						try:
+							test=self.get_bankdata_29assets([jahr],[month],alldata, b)
+							print('got assets',b)
+							test_weights=test[(test['ColumnCode']=='7')&(test['ItemNumber']=='2')]
+							test_weights.index=test_weights.time
+							weights_only=test_weights[test_weights.columns[-29:]] 
+							#build for all banks, but one time
+							df2[b] = weights_only.T[weights_only.T.columns[0]]
+							k=weights_only.T.columns[0]
+						except:
+							print(b,'did not work')
 
 				dicp[k]=df2
 			print(jahr, ' processed')
