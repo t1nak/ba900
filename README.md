@@ -15,7 +15,6 @@ Other dependencies: ```lxml``` and ```more_itertools``` ([pypi](https://pypi.org
 
 ![top10 similarity full](https://github.com/t1nak/ba900/blob/main/data/similarity_2018_full.png?raw=true)
 
-![top10 similarity half](https://github.com/t1nak/ba900/blob/main/data/similarity_2018_fhalf.png?raw=true)
 
 ![bubbles](https://github.com/t1nak/ba900/blob/main/data/bubbles_2015_2020.png?raw=true)
 
@@ -226,6 +225,7 @@ plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
 plt.show()
 ```
 
+![top10 similarity half](https://github.com/t1nak/ba900/blob/main/data/similarity_2018_fhalf.png?raw=true)
 
 
 You can check some examples in the ``exame_analyse.ipynb`` notebook. 
