@@ -83,36 +83,46 @@ class tranformer():
 	    month=monat
 	    year=jahr
 
+	    try:
 
-	    b=bankstring
 
-	    helper['id']=id
-	    helper['name']=b
-	    helper['equity']=self.get_equity_single_value(b, month,year,  dfrenamed )*1000
-	    helper['year']=year
-	    helper['month'] = month
-	    helper['debt']=self.get_debt_single_value(b, month,year, dfrenamed )*1000
-	    helper['leverage']=self.get_debt_single_value(b, month,year, dfrenamed )/self.get_equity_single_value(b, month,year,  dfrenamed )
-	    helper['total_assets']=self.get_total_assets_single_value(b, month,year, dfrenamed )*1000
 
-	    #get the weights - call function and select single value and last 29 columns to get only the weights
-	    test=self.get_bankdata_29assets([year],[month],dfrenamed, b)
-	    # # we only need one entry per month - so select column code 7 and itemnumber 2 for example 
-	    test_weights=test[(test['ColumnCode']=='7')&(test['ItemNumber']=='2')]
-	    test_weights.index=test_weights.time
-	    weights_only=test_weights[test_weights.columns[-29:]] 
+		    b=bankstring
+		    print(b)	
 
-	    helper['time']=test_weights.time
-	    for column in weights_only:
-	        helper[column]=weights_only[column][-1]
+		    helper['id']=id
+		    helper['name']=b
+		    helper['equity']=self.get_equity_single_value(b, month,year,  dfrenamed )*1000
+		    helper['year']=year
+		    helper['month'] = month
+		    helper['debt']=self.get_debt_single_value(b, month,year, dfrenamed )*1000
+		    helper['leverage']=self.get_debt_single_value(b, month,year, dfrenamed )/self.get_equity_single_value(b, month,year,  dfrenamed )
+		    helper['total_assets']=self.get_total_assets_single_value(b, month,year, dfrenamed )*1000
 
-	    if helper['total_assets']==(helper['equity']+ helper['debt']):
-	        df4=pd.DataFrame(helper)
+		    #get the weights - call function and select single value and last 29 columns to get only the weights
+		    test=self.get_bankdata_29assets([year],[month],dfrenamed, b)
+		    # print(test)
+		    # # we only need one entry per month - so select column code 7 and itemnumber 2 for example 
+		    test_weights=test[(test['ColumnCode']=='7')&(test['ItemNumber']=='2')]
+		    test_weights.index=test_weights.time
+		    weights_only=test_weights[test_weights.columns[-29:]] 
 
-	        # Check constitency ==1?
-	        if round(df4.iloc[0:1,-29:].sum(axis=1).values[0])==1:
-	            # print(b,'returned')
-	            return df4
+		    helper['time']=test_weights.time
+		    for column in weights_only:
+		        helper[column]=weights_only[column][-1]
+
+		    # print(round(helper['total_assets']),round((helper['equity']+ helper['debt'])))
+		    # if round(helper['total_assets'])==round((helper['equity']+ helper['debt'])):
+
+		    df4=pd.DataFrame(helper)
+		    print(df4[[x for x in df4.columns if "m" in x and 'time' not in x and 'name' not in x and 'month' not in x]].sum(axis = "columns").values[0])
+		    # if round(df4[[x for x in df4.columns if "m" in x and 'time' not in x and 'name' not in x and 'month' not in x]].sum(axis = "columns").values[0])==1:
+		    	# print(b,'returned')
+		    return df4	        	
+			# df4.to_csv('testfunc.csv')  # Check constitency ==1?
+	    except:
+	    	print(bankstring,'did not work')
+
 		            
 	def get_overview_timeseries(self,banklist, months,years,dfrenamed):
 	    import string
