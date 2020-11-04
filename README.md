@@ -9,6 +9,7 @@ Other dependencies: ```lxml``` and ```more_itertools``` ([pypi](https://pypi.org
 ## Time series of SA banks' balance sheets items 
 
 
+![bubbles](https://github.com/t1nak/ba900/blob/main/data/bubbles_2015_2020.png?raw=true)
 
 
 ![top4 portfolio weights](https://github.com/t1nak/ba900/blob/main/data/top4_mortgage_weights.png?raw=true)
@@ -16,7 +17,6 @@ Other dependencies: ```lxml``` and ```more_itertools``` ([pypi](https://pypi.org
 ![top10 similarity full](https://github.com/t1nak/ba900/blob/main/data/similarity_2018_full.png?raw=true)
 
 
-![bubbles](https://github.com/t1nak/ba900/blob/main/data/bubbles_2015_2020.png?raw=true)
 
 
 
@@ -224,6 +224,8 @@ for i,name in zip(arr[:-1],top5[:-1]):
 plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
 plt.show()
 ```
+
+Euclidean distances betwenn top 10 banks (dec 2018): 
 
 ![top10 similarity half](https://github.com/t1nak/ba900/blob/main/data/similarity_2018_fhalf.png?raw=true)
 
